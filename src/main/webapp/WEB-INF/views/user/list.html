@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <title>List</title>
+    <th:block th:replace="/layout/head :: head" />
+</head>
+<body>
+<div id="layout-wrapper">
+    <th:block th:replace="/navbar/header :: header"/>
+
+    <div class="vertical-menu">
+        <th:block th:replace="/navbar/sidebar-menu :: sidebar-menu"/>
+    </div>
+
+    <div class="main-content">
+        <div class="page-content">
+
+            <div class="container-fluid">
+
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 font-size-18 btn btn-outline-primary" id="create_modal" >Create User</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Create User</a></li>
+                                    <li class="breadcrumb-item active">Create User</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12">
+                        <div class="page-title-box d-flex align-items-center justify-content-between">
+                            <h4 class="mb-0 font-size-18 btn btn-outline-primary" id="update_modal" >Update User</h4>
+
+                            <div class="page-title-right">
+                                <ol class="breadcrumb m-0">
+                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Update User</a></li>
+                                    <li class="breadcrumb-item active">Create User</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+<!--                    <input type="hidden" id="currentRow"/>-->
+                <div>
+                    <table id="tbListUsers" class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>#</th>
+                                <th>Image</th>
+                                <th>FullName</th>
+                                <th>UserName</th>
+                                <th>Phone</th>
+                                <th>Province</th>
+                                <th>District</th>
+                                <th>Ward</th>
+                                <th>Address</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    <!-- ========== Left Sidebar Start ========== -->
+
+    </div>
+    <th:block th:replace="/layout/footer :: footer" />
+    <!-- END layout-wrapper -->
+</div>
+
+
+
+<div class="footer"></div>
+
+<th:block th:replace="/user/modal_create :: modal_create" />
+
+<th:block th:replace="/user/modal_update :: modal_update" />
+
+<th:block th:replace="/user/temp_row_customer :: temp_row_customer" />
+
+<th:block th:replace="/layout/script/script :: script" />
+<script>
+
+    let locationRegion = new LocationRegion();
+
+    let user = new User();
+
+    let role = new Role();
+
+
+    let tempRowCustomer = $.validator.format($.trim($('#tempRowCustomer').val().toString()));
+
+    function addRowCustomer() {
+        $('#tbListUsers tbody').prepend($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName, user.username, user.phone, user.locationRegion.provinceName, user.locationRegion.districtName, user.locationRegion.wardName, user.locationRegion.address)));
+    }
+    function unbindAll(){
+        $("#tbListUsers tbody tr").off();
+    }
+
+
+
+    function drawProvinces() {
+        return $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "GET",
+            "url": "https://vapi.vnappmob.com/api/province/",
+        })
+            .done((data) => {
+                $.each(data.results, (i, item) => {
+                    let str = `<option value="${item.province_id}">${item.province_name}</option>`;
+
+                    $('#province').prepend(str);
+                })
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR);
+            })
+    }
+
+    function drawDistricts(provinceId) {
+        return $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "GET",
+            "url": "https://vapi.vnappmob.com/api/province/district/" + provinceId,
+        })
+            .done((data) => {
+                $('#district').html('');
+
+                $.each(data.results, (i, item) => {
+                    let str = `<option value="${item.district_id}">${item.district_name}</option>`;
+
+                    $('#district').prepend(str);
+                })
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR);
+            })
+    }
+
+    function drawWards(districtId) {
+        return $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "GET",
+            "url": "https://vapi.vnappmob.com/api/province/ward/" + districtId,
+        })
+            .done((data) => {
+                $('#ward').html('')
+                $.each(data.results, (i, item) => {
+                    let str = `<option value="${item.ward_id}">${item.ward_name}</option>`;
+
+                    $('#ward').prepend(str);
+                })
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR);
+            })
+    }
+
+    drawProvinces().then(() => {
+        let provinceId = $('#province').val();
+        drawDistricts(provinceId).then(() => {
+            let districtId = $('#district').val();
+            drawWards(districtId);
+        });
+    });
+
+    $('#btnCreateUser').on('click', () =>{
+        locationRegion.provinceId = $('#province').val()
+        locationRegion.provinceName = $('#province :selected').text()
+        locationRegion.districtId = $('#district').val()
+        locationRegion.districtName = $('#district :selected').text()
+        locationRegion.wardId = $('#ward').val()
+        locationRegion.wardName = $('#ward :selected').text()
+        locationRegion.address = $('#address').val()
+
+        role.id = $('#role').val();
+
+        user.fullName = $('#fullName').val();
+        user.username = $('#user_name').val();
+        user.phone = $('#phone').val();
+        user.urlImage = 'user.png';
+        user.role = role;
+        user.locationRegion = locationRegion;
+
+        $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "POST",
+            "url": "http://localhost:8080/api/users/create",
+            "data": JSON.stringify(user)
+        })
+        .done((data) => {
+            user = data;
+
+            locationRegion = user.locationRegion
+
+            role = user.role
+
+            addRowCustomer();
+
+            $('#modalCreateUser').modal('hide');
+
+            App.SweetAlert.showSuccessAlert("Create user success");
+
+            unbindAll();
+
+        })
+        .fail( (jqXHR) => {
+            App.SweetAlert.showErrorAlert("Create user Fail")
+            console.log(jqXHR)
+            // $('#modalCreateUser .modal-alert-danger').html('').removeClass('hide').addClass('show');
+            //
+            // if (jqXHR.responseJSON.message) {
+            //     let msg = jqXHR.responseJSON.message;
+            //
+            //     let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+            //
+            //     $('#modalCreateUser .modal-alert-danger').append(str);
+            // }
+            // else if (jqXHR.responseJSON) {
+            //     $.each(jqXHR.responseJSON, (key, item) => {
+            //         let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
+            //         $("#" + key).addClass("error");
+            //
+            //         $('#modalCreateUser .modal-alert-danger').append(str);
+            //     })
+            // }
+        } )
+
+
+
+    })
+
+    $("#province").on('change', ()=>{
+        let provinceId = $('#province').val();
+        drawDistricts(provinceId).then(() => {
+            let districtId = $('#district').val();
+            drawWards(districtId);
+        });
+    })
+
+    $("#district").on('change', () =>{
+        let districtId = $('#district').val();
+        drawWards(districtId);
+    })
+
+    $('#create_modal').on('click', function (){
+        $('#modalCreateUser').modal('show')
+    })
+
+    $('#update_modal').on('click', function (){
+        $('#modalUpdateUser').modal('show')
+    })
+    function loadAllUser(){
+        return $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "GET",
+            "url": "http://localhost:8080/api/users"
+        })
+            .done((data) =>{
+                $("#tbListUsers tbody").html("");
+                console.log(data);
+                $.each(data, (i,item)=>{
+                    user = item;
+                    locationRegion = user.locationRegion;
+
+                    addRowCustomer();
+                })
+
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR);
+            })
+    }
+    loadAllUser();
+</script>
+
+</body>
+</html>
