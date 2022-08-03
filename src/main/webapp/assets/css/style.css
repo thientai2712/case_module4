@@ -2,3 +2,11 @@ table thead {
     background-color: #343a40;
     color: white;
 }
+
+.show {
+    display: block !important;
+}
+
+.hide {
+    display: none;
+}

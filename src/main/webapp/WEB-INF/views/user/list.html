@@ -20,25 +20,11 @@
                 <div class="row">
                     <div class="col-12">
                         <div class="page-title-box d-flex align-items-center justify-content-between">
-                            <h4 class="mb-0 font-size-18 btn btn-outline-primary" id="create_modal" >Create User</h4>
+                            <h4 class="mb-0 font-size-18 btn btn-outline-primary" id="btnShowCreate" >Create User</h4>
 
                             <div class="page-title-right">
                                 <ol class="breadcrumb m-0">
                                     <li class="breadcrumb-item"><a href="javascript: void(0);">Create User</a></li>
-                                    <li class="breadcrumb-item active">Create User</li>
-                                </ol>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-12">
-                        <div class="page-title-box d-flex align-items-center justify-content-between">
-                            <h4 class="mb-0 font-size-18 btn btn-outline-primary" id="update_modal" >Update User</h4>
-
-                            <div class="page-title-right">
-                                <ol class="breadcrumb m-0">
-                                    <li class="breadcrumb-item"><a href="javascript: void(0);">Update User</a></li>
                                     <li class="breadcrumb-item active">Create User</li>
                                 </ol>
                             </div>
@@ -55,7 +41,7 @@
                                 <th>#</th>
                                 <th>Image</th>
                                 <th>FullName</th>
-                                <th>UserName</th>
+                                <th>Email</th>
                                 <th>Phone</th>
                                 <th>Province</th>
                                 <th>District</th>
@@ -75,23 +61,26 @@
         </div>
 
     <!-- ========== Left Sidebar Start ========== -->
+<!--        <th:block th:replace="/layout/footer :: footer" />-->
+
 
     </div>
-    <th:block th:replace="/layout/footer :: footer" />
     <!-- END layout-wrapper -->
 </div>
 
 
 
-<div class="footer"></div>
+    <div class="footer" style="text-align: right"></div>
 
-<th:block th:replace="/user/modal_create :: modal_create" />
+    <th:block th:replace="/layout/footer :: footer" />
 
-<th:block th:replace="/user/modal_update :: modal_update" />
+    <th:block th:replace="/user/modal_create :: modal_create" />
 
-<th:block th:replace="/user/temp_row_customer :: temp_row_customer" />
+    <th:block th:replace="/user/modal_update :: modal_update" />
 
-<th:block th:replace="/layout/script/script :: script" />
+    <th:block th:replace="/user/temp_row_customer :: temp_row_customer" />
+
+    <th:block th:replace="/layout/script/script :: script" />
 <script>
 
     let locationRegion = new LocationRegion();
@@ -100,16 +89,36 @@
 
     let role = new Role();
 
+    let userId = null;
+
 
     let tempRowCustomer = $.validator.format($.trim($('#tempRowCustomer').val().toString()));
 
     function addRowCustomer() {
-        $('#tbListUsers tbody').prepend($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName, user.username, user.phone, user.locationRegion.provinceName, user.locationRegion.districtName, user.locationRegion.wardName, user.locationRegion.address)));
+        $('#tbListUsers tbody').prepend($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName, user.email, user.phone, user.locationRegion.provinceName, user.locationRegion.districtName, user.locationRegion.wardName, user.locationRegion.address)));
     }
+
+    function replaceRowCustomer() {
+        $('#tr_' + user.id).replaceWith($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName,user.email, user.phone, locationRegion.provinceName, locationRegion.districtName, locationRegion.wardName, locationRegion.address)));
+    }
+
     function unbindAll(){
         $("#tbListUsers tbody tr").off();
     }
 
+
+
+    function handleShowFooter() {
+        $("#tbListUsers tbody tr").on('click', function () {
+            userId = $(this).attr('id').replace('tr_', '');
+
+            let tempFooter = $.validator.format($.trim($('#tempFooter').val().toString()));
+
+            $('.footer').html(tempFooter);
+
+            handleShowUpdate();
+        });
+    }
 
 
     function drawProvinces() {
@@ -126,6 +135,7 @@
                     let str = `<option value="${item.province_id}">${item.province_name}</option>`;
 
                     $('#province').prepend(str);
+                    $('#provinceUp').prepend(str);
                 })
             })
             .fail((jqXHR) => {
@@ -144,11 +154,13 @@
         })
             .done((data) => {
                 $('#district').html('');
+                $('#districtUp').html('');
 
                 $.each(data.results, (i, item) => {
                     let str = `<option value="${item.district_id}">${item.district_name}</option>`;
 
                     $('#district').prepend(str);
+                    $('#districtUp').prepend(str);
                 })
             })
             .fail((jqXHR) => {
@@ -167,10 +179,12 @@
         })
             .done((data) => {
                 $('#ward').html('')
+                $('#wardUp').html('')
                 $.each(data.results, (i, item) => {
                     let str = `<option value="${item.ward_id}">${item.ward_name}</option>`;
 
                     $('#ward').prepend(str);
+                    $('#wardUp').prepend(str);
                 })
             })
             .fail((jqXHR) => {
@@ -186,6 +200,8 @@
         });
     });
 
+
+
     $('#btnCreateUser').on('click', () =>{
         locationRegion.provinceId = $('#province').val()
         locationRegion.provinceName = $('#province :selected').text()
@@ -198,7 +214,7 @@
         role.id = $('#role').val();
 
         user.fullName = $('#fullName').val();
-        user.username = $('#user_name').val();
+        user.email = $('#email').val();
         user.phone = $('#phone').val();
         user.urlImage = 'user.png';
         user.role = role;
@@ -228,6 +244,8 @@
 
             unbindAll();
 
+            handleShowFooter();
+
         })
         .fail( (jqXHR) => {
             App.SweetAlert.showErrorAlert("Create user Fail")
@@ -255,6 +273,53 @@
 
     })
 
+    $('#btnUpdateUser').on('click', () =>{
+
+        locationRegion.provinceId = $('#provinceUp').val()
+        locationRegion.provinceName = $('#provinceUp :selected').text()
+        locationRegion.districtId = $('#districtUp').val()
+        locationRegion.districtName = $('#districtUp :selected').text()
+        locationRegion.wardId = $('#wardUp').val()
+        locationRegion.wardName = $('#wardUp :selected').text()
+        locationRegion.address = $('#addressUp').val()
+
+        role.id = $('#role').val();
+
+        user.fullName = $('#fullNameUp').val();
+        user.email = $('#emailUp').val();
+        user.phone = $('#phoneUp').val();
+        user.urlImage = 'user.png';
+        user.role = role;
+        user.locationRegion = locationRegion;
+        $.ajax({
+            "headers": {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            "type": "PUT",
+            "url": "http://localhost:8080/api/users/update",
+            "data": JSON.stringify(user)
+        })
+            .done((data) => {
+                user = data;
+                locationRegion = user.locationRegion;
+
+                replaceRowCustomer();
+
+                $('#modalUpdateUser').modal('hide');
+
+                App.SweetAlert.showSuccessAlert('Update customer success');
+
+                unbindAll();
+
+                handleShowFooter();
+
+            })
+            .fail((jqXHR) =>{
+                console.log(jqXHR);
+            })
+    })
+
     $("#province").on('change', ()=>{
         let provinceId = $('#province').val();
         drawDistricts(provinceId).then(() => {
@@ -268,13 +333,63 @@
         drawWards(districtId);
     })
 
-    $('#create_modal').on('click', function (){
-        $('#modalCreateUser').modal('show')
+    $("#provinceUp").on('change', ()=>{
+        let provinceId = $('#provinceUp').val();
+        drawDistricts(provinceId).then(() => {
+            let districtId = $('#districtUp').val();
+            drawWards(districtId);
+        });
     })
 
-    $('#update_modal').on('click', function (){
-        $('#modalUpdateUser').modal('show')
+    $("#districtUp").on('change', () =>{
+        let districtId = $('#districtUp').val();
+        drawWards(districtId);
     })
+
+    $('#btnShowCreate').on('click', function (){
+        $('#modalCreateUser').modal('show')
+    })
+    function handleShowUpdate() {
+        $('#btnupdate_modal').on('click', () => {
+
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "GET",
+                url: "http://localhost:8080/api/users/" + userId
+            })
+                .done((data) => {
+                    console.log(data);
+                    user = data;
+                    locationRegion = user.locationRegion;
+
+                    $('#fullNameUp').val(user.fullName);
+                    $('#phoneUp').val(user.phone);
+                    $('#emailUp').val(user.email);
+
+                    $('#provinceUp').val(locationRegion.provinceId);
+                    console.log(locationRegion.provinceId);
+
+                    drawDistricts(locationRegion.provinceId).then(() => {
+                        $('#districtUp').val(locationRegion.districtId);
+
+                        drawWards(locationRegion.districtId).then(() => {
+                            $('#wardUp').val(locationRegion.wardId);
+                        })
+                    })
+
+                    $('#addressUp').val(locationRegion.address)
+
+                    $('#modalUpdateUser').modal('show')
+
+                })
+                .fail((jqXHR) => {
+                    console.log(jqXHR);
+                })
+        })
+    }
     function loadAllUser(){
         return $.ajax({
             "headers": {
@@ -293,6 +408,7 @@
 
                     addRowCustomer();
                 })
+                handleShowFooter();
 
             })
             .fail((jqXHR) => {
@@ -300,6 +416,15 @@
             })
     }
     loadAllUser();
+
+
+    $(() => {
+       $("button.btn-close").on("click", () => {
+          $(".modal").modal("hide");
+       });
+
+    });
+
 </script>
 
 </body>

@@ -28,8 +28,8 @@ public class User extends BaseEntities {
     @Column(name = "full_name", nullable = false)
     private String fullName;
 
-    @Column(name = "user_name", nullable = false)
-    private String username;
+    @Column(nullable = false, unique = true)
+    private String email;
 
     private String password;
 
@@ -52,7 +52,7 @@ public class User extends BaseEntities {
                 .setId(id)
                 .setUrlImage(urlImage)
                 .setFullName(fullName)
-                .setUsername(username)
+                .setEmail(email)
                 .setPassword(password)
                 .setPhone(phone)
                 .setRole(role.toroleDTO())

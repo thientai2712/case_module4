@@ -33,6 +33,14 @@ public class UserController {
         modelAndView.addObject("user", new User());
         return modelAndView;
     }
+    @GetMapping("/update")
+    public ModelAndView showUpdatePage(){
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("/user/update");
+
+        modelAndView.addObject("user", new User());
+        return modelAndView;
+    }
 
     @PostMapping("/create")
     public ModelAndView doCreate(@ModelAttribute User user){

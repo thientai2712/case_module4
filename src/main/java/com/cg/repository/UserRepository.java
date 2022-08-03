@@ -11,17 +11,17 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<User,Long> {
-    User getByUsername(String username);
+    User getByEmail(String email);
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail (String email);
 
-    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
 
     @Query("SELECT new com.cg.model.dto.UserDTO (" +
             "u.id, " +
             "u.urlImage, " +
             "u.fullName, " +
-            "u.username, " +
+            "u.email, " +
             "u.password, " +
             "u.phone, " +
             "u.locationRegion" +
@@ -33,7 +33,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query("SELECT new com.cg.model.dto.UserDTO (" +
             "u.id, " +
             "u.fullName, " +
-            "u.username, " +
+            "u.email, " +
             "u.password, " +
             "u.phone, " +
             "u.locationRegion" +
@@ -44,6 +44,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     UserDTO getUserDTOById();
 
 
-    @Query("SELECT NEW com.cg.model.dto.UserDTO (u.id, u.username) FROM User u WHERE u.username = ?1")
-    Optional<UserDTO> findUserDTOByUsername(String username);
+    @Query("SELECT NEW com.cg.model.dto.UserDTO (u.id, u.email) FROM User u WHERE u.email = ?1")
+    Optional<UserDTO> findUserDTOByEmail(String email);
 }

@@ -1,5 +1,6 @@
 package com.cg.service.user;
 
+import com.cg.exception.EmailExistsException;
 import com.cg.model.LocationRegion;
 import com.cg.model.User;
 import com.cg.model.dto.UserDTO;
@@ -58,9 +59,10 @@ public class UserServiceImpl implements IUserService {
         return userRepository.existsById(id);
     }
 
-    @Override
-    public Boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+
+
+    public Boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
     }
 
     @Override
@@ -69,22 +71,23 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
-    public User getByUsername(String username) {
-        return userRepository.getByUsername(username);
+    public User getByEmail(String email) {
+        return null;
     }
 
     @Override
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public Optional<User> findByEmail(String email) {
+        return Optional.empty();
     }
 
     @Override
-    public Optional<UserDTO> findUserDTOByUsername(String username) {
-        return userRepository.findUserDTOByUsername(username);
+    public Optional<UserDTO> findUserDTOByEmail(String email) {
+        return Optional.empty();
     }
 
+
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByEmail(String email) throws EmailExistsException {
         return null;
     }
 
@@ -97,6 +100,11 @@ public class UserServiceImpl implements IUserService {
     @Override
     public void remove(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        return null;
     }
 
 //    @Override

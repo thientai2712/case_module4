@@ -1,5 +1,6 @@
 package com.cg.service.user;
 
+import com.cg.exception.EmailExistsException;
 import com.cg.model.dto.UserDTO;
 import com.cg.service.IGeneralService;
 import com.cg.model.User;
@@ -16,15 +17,15 @@ public interface IUserService extends IGeneralService<User>, UserDetailsService 
 
     Boolean existsById(Long id);
 
-    Boolean existsByUsername(String username);
+    Boolean existsByEmail(String email);
 
-    Boolean existsByEmailAndIdIsNot(String username, Long id);
+    Boolean existsByEmailAndIdIsNot(String email, Long id);
 
-    User getByUsername(String username);
+    User getByEmail(String email);
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findByEmail(String email);
 
-    Optional<UserDTO> findUserDTOByUsername(String username);
+    Optional<UserDTO> findUserDTOByEmail(String email);
 
-    UserDetails loadUserByUsername(String username) throws UsernameNotFoundException;
+    UserDetails loadUserByEmail(String email) throws EmailExistsException;
 }
