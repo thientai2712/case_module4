@@ -2,6 +2,7 @@ package com.cg.model;
 
 
 import com.cg.model.dto.UserDTO;
+import com.cg.model.dto.UserDTOS;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -56,6 +57,14 @@ public class User extends BaseEntities {
                 .setPassword(password)
                 .setPhone(phone)
                 .setRole(role.toroleDTO())
+                .setLocationRegion(locationRegion.toLocationRegionDTO());
+    }
+    public UserDTOS toUserDTOS(){
+        return new UserDTOS()
+                .setId(id)
+                .setFullName(fullName)
+                .setEmail(email)
+                .setPhone(phone)
                 .setLocationRegion(locationRegion.toLocationRegionDTO());
     }
 

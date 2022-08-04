@@ -250,23 +250,23 @@
         .fail( (jqXHR) => {
             App.SweetAlert.showErrorAlert("Create user Fail")
             console.log(jqXHR)
-            // $('#modalCreateUser .modal-alert-danger').html('').removeClass('hide').addClass('show');
-            //
-            // if (jqXHR.responseJSON.message) {
-            //     let msg = jqXHR.responseJSON.message;
-            //
-            //     let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
-            //
-            //     $('#modalCreateUser .modal-alert-danger').append(str);
-            // }
-            // else if (jqXHR.responseJSON) {
-            //     $.each(jqXHR.responseJSON, (key, item) => {
-            //         let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
-            //         $("#" + key).addClass("error");
-            //
-            //         $('#modalCreateUser .modal-alert-danger').append(str);
-            //     })
-            // }
+            $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
+
+            if (jqXHR.responseJSON.message) {
+                let msg = jqXHR.responseJSON.message;
+
+                let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                $('#modalCreateUser .modal-alert-danger').append(str);
+            }
+            else if (jqXHR.responseJSON) {
+                $.each(jqXHR.responseJSON, (key, item) => {
+                    let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
+                    $("#" + key).addClass("error");
+
+                    $('#modalCreateUser .modal-alert-danger').append(str);
+                })
+            }
         } )
 
 
@@ -297,7 +297,7 @@
                 "content-type": "application/json"
             },
             "type": "PUT",
-            "url": "http://localhost:8080/api/users/update",
+                "url": "http://localhost:8080/api/users/update",
             "data": JSON.stringify(user)
         })
             .done((data) => {
@@ -316,7 +316,23 @@
 
             })
             .fail((jqXHR) =>{
-                console.log(jqXHR);
+                $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
+
+                if (jqXHR.responseJSON.message) {
+                    let msg = jqXHR.responseJSON.message;
+
+                    let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                    $('#modalUpdateUser .modal-alert-danger').append(str);
+                }
+                else if (jqXHR.responseJSON) {
+                    $.each(jqXHR.responseJSON, (key, item) => {
+                        let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
+                        $("#" + key).addClass("error");
+
+                        $('#modalUpdateUser .modal-alert-danger').append(str);
+                    })
+                }
             })
     })
 

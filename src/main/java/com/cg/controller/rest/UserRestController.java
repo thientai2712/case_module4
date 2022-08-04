@@ -1,10 +1,13 @@
 package com.cg.controller.rest;
 
 import com.cg.exception.DataInputException;
+import com.cg.exception.EmailExistsException;
 import com.cg.exception.ResourceNotFoundException;
 import com.cg.model.User;
 import com.cg.model.dto.UserDTO;
+import com.cg.model.dto.UserDTOS;
 import com.cg.service.user.IUserService;
+import com.cg.service.user.UserServiceImpl;
 import com.cg.util.AppUtil;
 import jdk.jfr.internal.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,36 +55,57 @@ public class UserRestController {
         userDTO.setId(0L);
         userDTO.getLocationRegion().setId(0L);
 
-        Boolean exitsEmail
+        Boolean exitsEmail = userService.existsByEmail(userDTO.getEmail());
+
+        if (exitsEmail){
+            throw new EmailExistsException("Email already exits");
+        }
 
         User newUser = userService.save(userDTO.toUser());
+
         return  new ResponseEntity<>(newUser.toUserDTO(), HttpStatus.CREATED);
     }
 
+
     @PutMapping("/update")
-    public ResponseEntity<?> doUpdate(@Validated @RequestBody UserDTO userDTO, BindingResult bindingResult) {
+    public ResponseEntity<?> doUpdate(@Validated @RequestBody UserDTOS userDTOS, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {
             return appUtil.mapErrorToResponse(bindingResult);
         }
 
-        Boolean existId = userService.existsById(userDTO.getId());
+        Optional<User> currentUser = userService.findById(userDTOS.getId());
+
+        userDTOS.getLocationRegion().setId(currentUser.get().getLocationRegion().getId());
+
+        Boolean existId = userService.existsById(userDTOS.getId());
 
         if (!existId) {
             throw new ResourceNotFoundException("Customer ID invalid");
         }
 
-        Boolean existEmail =userService.existsByEmailAndIdIsNot(userDTO.getEmail(), userDTO.getId());
+//        Boolean existEmail =userService.existsByEmailAndIdIsNot(userDTOS.getEmail(), userDTOS.getId());
+//
+//        if (existEmail){
+//            throw new DataInputException("Email is exist");
+//        }
 
-        if (existEmail){
-            throw new DataInputException("Email is exist");
-        }
+//        userDTOS.getLocationRegion().setId(0L);
 
-        userDTO.getLocationRegion().setId(0L);
+        currentUser.get().setFullName(userDTOS.getFullName());
+        currentUser.get().setEmail(userDTOS.getEmail());
+        currentUser.get().setLocationRegion(userDTOS.getLocationRegion().toLocationRegion());
+        currentUser.get().setPhone(userDTOS.getPhone());
+        currentUser.get().setUrlImage("user.png");
 
-        User updatedUser = userService.save(userDTO.toUser());
 
-        return new ResponseEntity<>(updatedUser.toUserDTO(), HttpStatus.ACCEPTED);
+
+
+
+        User updatedUser = userService.save(currentUser.get());
+
+        return new ResponseEntity<>(updatedUser.toUserDTOS(), HttpStatus.ACCEPTED);
     }
+
 
 }

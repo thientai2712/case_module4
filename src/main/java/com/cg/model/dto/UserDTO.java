@@ -34,20 +34,19 @@ public class UserDTO {
     private String email;
 
     @Size(max = 30, message = "Maximum password length 30 characters")
-    @Size(min = 6, message = "Minimum password length 30 characters")
+//    @Size(min = 6, message = "Minimum password length 30 characters")
     private String password;
 
-
+    @Pattern(regexp = "^[0][1-9][0-9]{8,9}$", message = "Phone is not valid")
     private String phone;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
+    @Valid
     private RoleDTO role;
 
     @Column(name = "url_image",nullable = false)
     private String urlImage;
 
-     @Valid
+    @Valid
     private LocationRegionDTO locationRegion;
 
     public UserDTO(Long id, String email) {
