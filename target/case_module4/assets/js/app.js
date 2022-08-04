@@ -86,3 +86,20 @@ class Role {
         this.name = name;
     }
 }
+class Product{
+    constructor(id,title,price,quantity,urlImage,category) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.quantity = quantity;
+        this.category = category;
+        this.urlImage = urlImage;
+    }
+}
+class Category {
+    constructor(id,title) {
+        this.id = id;
+        this.title = title;
+    }
+
+}

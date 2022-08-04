@@ -66,8 +66,18 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public Boolean existByPhone(String phone) {
+        return userRepository.existsByPhone(phone);
+    }
+
+    @Override
     public Boolean existsByEmailAndIdIsNot(String username, Long id) {
-        return null;
+        return userRepository.existsByEmailAndIdIsNot(username,id);
+    }
+
+    @Override
+    public Boolean existsByPhoneAndIdIsNot(String phone, Long id) {
+        return userRepository.existsByPhoneAndIdIsNot(phone, id);
     }
 
     @Override

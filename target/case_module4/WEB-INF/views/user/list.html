@@ -47,6 +47,7 @@
                                 <th>District</th>
                                 <th>Ward</th>
                                 <th>Address</th>
+                                <th>Role</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -95,11 +96,11 @@
     let tempRowCustomer = $.validator.format($.trim($('#tempRowCustomer').val().toString()));
 
     function addRowCustomer() {
-        $('#tbListUsers tbody').prepend($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName, user.email, user.phone, user.locationRegion.provinceName, user.locationRegion.districtName, user.locationRegion.wardName, user.locationRegion.address)));
+        $('#tbListUsers tbody').prepend($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName, user.email, user.phone, user.locationRegion.provinceName, user.locationRegion.districtName, user.locationRegion.wardName, user.locationRegion.address, role.code)));
     }
 
     function replaceRowCustomer() {
-        $('#tr_' + user.id).replaceWith($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName,user.email, user.phone, locationRegion.provinceName, locationRegion.districtName, locationRegion.wardName, locationRegion.address)));
+        $('#tr_' + user.id).replaceWith($(tempRowCustomer(user.id,user.id,user.urlImage, user.fullName,user.email, user.phone, locationRegion.provinceName, locationRegion.districtName, locationRegion.wardName, locationRegion.address, role.code)));
     }
 
     function unbindAll(){
@@ -283,14 +284,14 @@
         locationRegion.wardName = $('#wardUp :selected').text()
         locationRegion.address = $('#addressUp').val()
 
-        role.id = $('#role').val();
 
         user.fullName = $('#fullNameUp').val();
         user.email = $('#emailUp').val();
         user.phone = $('#phoneUp').val();
-        user.urlImage = 'user.png';
-        user.role = role;
+        user.urlImage = "user.png";
         user.locationRegion = locationRegion;
+
+
         $.ajax({
             "headers": {
                 "accept": "application/json",
@@ -301,7 +302,10 @@
             "data": JSON.stringify(user)
         })
             .done((data) => {
+                console.log("hihihi")
+                console.log(data);
                 user = data;
+                user.urlImage = "user.png";
                 locationRegion = user.locationRegion;
 
                 replaceRowCustomer();
@@ -421,6 +425,7 @@
                 $.each(data, (i,item)=>{
                     user = item;
                     locationRegion = user.locationRegion;
+                    role = user.role;
 
                     addRowCustomer();
                 })

@@ -30,6 +30,12 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     Boolean existsByEmail(String email);
 
+    Boolean existsByPhone(String phone);
+
+    Boolean existsByEmailAndIdIsNot(String username, Long id);
+
+    Boolean existsByPhoneAndIdIsNot(String phone, Long id);
+
     @Query("SELECT new com.cg.model.dto.UserDTO (" +
             "u.id, " +
             "u.urlImage, " +
@@ -37,6 +43,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
             "u.email, " +
             "u.password, " +
             "u.phone, " +
+            "u.role, " +
             "u.locationRegion" +
             ") " +
             "FROM User AS u"
@@ -60,4 +67,5 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT NEW com.cg.model.dto.UserDTO (u.id, u.email) FROM User u WHERE u.email = ?1")
     Optional<UserDTO> findUserDTOByEmail(String email);
+
 }

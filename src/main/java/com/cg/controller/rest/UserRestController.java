@@ -61,6 +61,12 @@ public class UserRestController {
             throw new EmailExistsException("Email already exits");
         }
 
+        Boolean exitsPhone = userService.existByPhone(userDTO.getPhone());
+
+        if (exitsPhone){
+            throw new DataInputException("PhoneNumber already exits");
+        }
+
         User newUser = userService.save(userDTO.toUser());
 
         return  new ResponseEntity<>(newUser.toUserDTO(), HttpStatus.CREATED);
@@ -84,11 +90,17 @@ public class UserRestController {
             throw new ResourceNotFoundException("Customer ID invalid");
         }
 
-//        Boolean existEmail =userService.existsByEmailAndIdIsNot(userDTOS.getEmail(), userDTOS.getId());
-//
-//        if (existEmail){
-//            throw new DataInputException("Email is exist");
-//        }
+        Boolean existPhoneNumber = userService.existsByPhoneAndIdIsNot(userDTOS.getPhone(), userDTOS.getId());
+
+        if (existPhoneNumber){
+            throw new DataInputException("PhoneNumber is exist");
+        }
+
+        Boolean existEmail = userService.existsByEmailAndIdIsNot(userDTOS.getEmail(), userDTOS.getId());
+
+        if (existEmail){
+            throw new DataInputException("Email is exist");
+        }
 
 //        userDTOS.getLocationRegion().setId(0L);
 
@@ -97,7 +109,6 @@ public class UserRestController {
         currentUser.get().setLocationRegion(userDTOS.getLocationRegion().toLocationRegion());
         currentUser.get().setPhone(userDTOS.getPhone());
         currentUser.get().setUrlImage("user.png");
-
 
 
 

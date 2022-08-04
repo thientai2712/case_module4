@@ -84,4 +84,14 @@ public class UserDTO {
         this.phone = phone;
         this.locationRegion = locationRegion.toLocationRegionDTO();
     }
+    public UserDTO(Long id,String urlImage, String fullName, String email, String password, String phone,Role role, LocationRegion locationRegion) {
+        this.id = id;
+        this.urlImage = urlImage;
+        this.fullName = fullName;
+        this.email = email;
+        this.password = password;
+        this.phone = phone;
+        this.role = role.toroleDTO();
+        this.locationRegion = locationRegion.toLocationRegionDTO();
+    }
 }

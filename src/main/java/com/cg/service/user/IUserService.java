@@ -19,7 +19,11 @@ public interface IUserService extends IGeneralService<User>, UserDetailsService 
 
     Boolean existsByEmail(String email);
 
+    Boolean existByPhone (String phone);
+
     Boolean existsByEmailAndIdIsNot(String email, Long id);
+
+    Boolean existsByPhoneAndIdIsNot(String phone, Long id);
 
     User getByEmail(String email);
 

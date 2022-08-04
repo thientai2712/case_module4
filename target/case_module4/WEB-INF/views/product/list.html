@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+  <title>List</title>
+  <th:block th:replace="/layout/head :: head" />
+</head>
+<body>
+<div id="layout-wrapper">
+  <th:block th:replace="/navbar/header :: header"/>
+
+  <div class="vertical-menu">
+    <th:block th:replace="/navbar/sidebar-menu :: sidebar-menu"/>
+  </div>
+
+  <div class="main-content">
+    <div class="page-content">
+
+      <div class="container-fluid">
+
+        <div class="row">
+          <div class="col-12">
+            <div class="page-title-box d-flex align-items-center justify-content-between">
+              <h4 class="mb-0 font-size-18 btn btn-outline-primary" id="btnShowCreate" >
+                  <i class="fa fa-plus" aria-hidden="true"></i>
+                  Create Product</h4>
+
+              <div class="page-title-right">
+                <ol class="breadcrumb m-0">
+                  <li class="breadcrumb-item"><a href="javascript: void(0);">Create Product</a></li>
+                  <li class="breadcrumb-item active">Create Product</li>
+                </ol>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!--                    <input type="hidden" id="currentRow"/>-->
+        <div>
+            <table id="tbListUsers" class="table table-hover">
+                      <thead>
+                            <tr>
+                              <th></th>
+                              <th>#</th>
+                              <th>Product Name</th>
+                              <th>Image</th>
+                              <th>Price</th>
+                              <th>Quantity</th>
+                              <th>Category</th>
+                            </tr>
+                      </thead>
+                      <tbody>
+
+                      </tbody>
+            </table>
+
+        </div>
+
+      </div>
+
+    </div>
+
+    <!-- ========== Left Sidebar Start ========== -->
+    <!--        <th:block th:replace="/layout/footer :: footer" />-->
+
+
+  </div>
+  <!-- END layout-wrapper -->
+</div>
+
+      <div class="footer" style="text-align: right"></div>
+
+      <th:block th:replace="/layout/footer :: footer" />
+
+      <th:block th:replace="/layout/script/script :: script" />
+
+    <th:block th:replace="/product/modal_create :: modal_create" />
+
+  <script>
+
+  let product = new Product();
+
+  let category = new Category();
+
+  $('#btnShowCreate').on('click', () =>{
+      $('#modalCreateProduct').modal('show')
+  })
+
+  </script>
+
+</body>
+</html>
