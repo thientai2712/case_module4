@@ -381,7 +381,6 @@
                 url: "http://localhost:8080/api/users/" + userId
             })
                 .done((data) => {
-                    console.log(data);
                     user = data;
                     locationRegion = user.locationRegion;
 
@@ -390,7 +389,6 @@
                     $('#emailUp').val(user.email);
 
                     $('#provinceUp').val(locationRegion.provinceId);
-                    console.log(locationRegion.provinceId);
 
                     drawDistricts(locationRegion.provinceId).then(() => {
                         $('#districtUp').val(locationRegion.districtId);
@@ -443,7 +441,6 @@
        $("button.btn-close").on("click", () => {
           $(".modal").modal("hide");
        });
-
     });
 
 </script>

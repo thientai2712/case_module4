@@ -20,12 +20,10 @@ import java.math.BigDecimal;
 @Accessors(chain = true)
 public class ProductDTO {
 
-    private String id;
+    private Long id;
 
-    @Column(nullable = false)
     private String title;
 
-    @Digits(integer = 12, fraction = 0)
     private String price;
 
     private String quantity;
@@ -34,16 +32,24 @@ public class ProductDTO {
     private String urlImage;
 
     @Valid
-    private CategoryDTO categoryDTO;
+    private CategoryDTO category;
 
+    public ProductDTO(Long id, String title,String urlImage , Integer quantity,BigDecimal price, Category category) {
+        this.id = id;
+        this.title = title;
+        this.price = price.toString();
+        this.quantity = quantity.toString();
+        this.urlImage = urlImage;
+        this.category = category.toCategoryDTO();
+    }
 
     public Product toProduct(){
         return new Product()
-                .setId(Long.parseLong(id))
+                .setId(id)
                 .setTitle(title)
                 .setUrlImage(urlImage)
                 .setPrice(new BigDecimal(Long.parseLong(price)))
                 .setQuantity(Integer.parseInt(quantity))
-                .setCategory(categoryDTO.toCategory());
+                .setCategory(category.toCategory());
     }
 }

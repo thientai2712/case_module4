@@ -36,7 +36,7 @@
 
         <!--                    <input type="hidden" id="currentRow"/>-->
         <div>
-            <table id="tbListUsers" class="table table-hover">
+            <table id="tbListProducts" class="table table-hover">
                       <thead>
                             <tr>
                               <th></th>
@@ -67,13 +67,17 @@
   <!-- END layout-wrapper -->
 </div>
 
-      <div class="footer" style="text-align: right"></div>
+         <div class="footer" style="text-align: right"></div>
 
-      <th:block th:replace="/layout/footer :: footer" />
+         <th:block th:replace="/layout/footer :: footer" />
 
-      <th:block th:replace="/layout/script/script :: script" />
+        <th:block th:replace="/product/modal_create :: modal_create" />
 
-    <th:block th:replace="/product/modal_create :: modal_create" />
+        <th:block th:replace="/product/modal_update :: modal_update" />
+
+        <th:block th:replace="/product/temp_row_product :: temp_row_product" />
+
+        <th:block th:replace="/layout/script/script :: script" />
 
   <script>
 
@@ -81,9 +85,189 @@
 
   let category = new Category();
 
+  let productId = null;
+
+  function unbindAll(){
+      $("#tbListProducts tbody tr").off();
+  }
+
+  let tempRowProduct = $.validator.format($.trim($('#tempRowProduct').val().toString()));
+
+  function addRowCustomer() {
+      $('#tbListProducts tbody').prepend($(tempRowProduct(product.id,product.id, product.title,product.urlImage, product.price, product.quantity,category.title)));
+  }
+
+  function handleShowFooter() {
+      $("#tbListProducts tbody tr").on('click', function () {
+          productId = $(this).attr('id').replace('tr_', '');
+
+          let tempFooter = $.validator.format($.trim($('#tempFooter').val().toString()));
+
+          $('.footer').html(tempFooter);
+
+          handleShowUpdate();
+      });
+  }
+
+  $('#btnCreateProduct').on('click', () =>{
+
+      category.id = $('#category').val();
+
+
+      product.title = $('#title').val();
+      product.urlImage = $('#imageUp').val();
+      product.price = $('#price').val();
+      product.quantity = $('#quantity').val();
+      product.category = category;
+
+
+      $.ajax({
+          "headers": {
+              "accept": "application/json",
+              "content-type": "application/json"
+          },
+          "type": "POST",
+          "url": "http://localhost:8080/api/products/create",
+          "data": JSON.stringify(product)
+      })
+          .done((data) => {
+              console.log(data);
+              product = data;
+              category = product.category;
+
+              addRowCustomer();
+
+              $('#modalCreateProduct').modal('hide');
+
+              App.SweetAlert.showSuccessAlert('Create Product success');
+
+              unbindAll();
+
+              handleShowFooter();
+
+          })
+          .fail((jqXHR) => {
+              console.log(jqXHR);
+          })
+
+  })
+
+  $('#btnUpdateProduct').on('click', ()=>{
+
+          category.id = $('#categoryUp').val();
+
+          product.title = $('#titleUp').val();
+          product.urlImage = $('#imageUp').val();
+          product.price = $('#priceUp').val();
+          product.quantity = $('#quantityUp').val();
+          product.category = category;
+
+      $.ajax({
+          "headers": {
+              "accept": "application/json",
+              "content-type": "application/json"
+          },
+          "type": "PUT",
+          "url": "http://localhost:8080/api/products/update",
+          "data": JSON.stringify(product)
+      })
+          .done((data) => {
+              product = data;
+
+              category = product.category;
+
+              addRowCustomer();
+
+              $('#modalUpdateProduct').modal('hide');
+
+              App.SweetAlert.showSuccessAlert("Create user success");
+
+              unbindAll();
+
+              handleShowFooter();
+
+          })
+
+  })
+
+
   $('#btnShowCreate').on('click', () =>{
       $('#modalCreateProduct').modal('show')
   })
+
+
+  function handleShowUpdate(){
+    $('#btnupdate_modal').on('click', () => {
+        $.ajax({
+            headers: {
+                "accept": "application/json",
+                "content-type": "application/json"
+            },
+            type: "GET",
+            url: "http://localhost:8080/api/products/" + productId
+        })
+        .done((data) => {
+            console.log(data)
+            product = data;
+
+            category = product.category
+
+            $('#titleUp').val(product.title);
+            $('#imageSa').val(product.urlImage);
+            $('#priceUp').val(product.price);
+            $('#quantityUp').val(product.quantity);
+            $('#categoryUp').val(category.id);
+
+            $("#modalUpdateProduct").modal('show');
+
+        })
+        .fail((jqXHR) => {
+            if (jqXHR.status === 401) {
+                App.SweetAlert.showErrorAlert("Vui lòng đăng nhập");
+            }
+            else {
+                if (jqXHR.status === 403) {
+                    App.SweetAlert.showErrorAlert("Bạn không đủ quyền để thực hiện chức năng này");
+                }
+                else {
+                    App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);
+                }
+            }
+        })
+    })
+  }
+
+  function loadAllProduct(){
+      return $.ajax({
+          "headers": {
+              "accept": "application/json",
+              "content-type": "application/json"
+          },
+          "type": "GET",
+          "url": "http://localhost:8080/api/products"
+      })
+          .done((data) =>{
+              $("#tbListProducts tbody").html("");
+              console.log(data);
+              $.each(data, (i,item)=>{
+                  product = item;
+                  category = product.category
+                  addRowCustomer();
+              })
+              handleShowFooter();
+
+          })
+          .fail((jqXHR) => {
+              console.log(jqXHR);
+          })
+  }
+  loadAllProduct();
+
+  $(() => {
+      $("button.btn-close").on("click", () => {
+          $(".modal").modal("hide");
+      });
+  });
 
   </script>
 

@@ -44,12 +44,12 @@ public class Product extends BaseEntities {
 
     public ProductDTO toProductDTO(){
         return new ProductDTO()
-                .setId(id.toString())
+                .setId(id)
                 .setUrlImage(urlImage)
                 .setTitle(title)
                 .setPrice(price.toString())
                 .setQuantity(String.valueOf(quantity))
-                .setCategoryDTO(category.toCategoryDTO());
+                .setCategory(category.toCategoryDTO());
     }
 
 }

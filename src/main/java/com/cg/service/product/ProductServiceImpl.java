@@ -1,6 +1,8 @@
 package com.cg.service.product;
 
+import com.cg.model.Category;
 import com.cg.model.Product;
+import com.cg.model.dto.ProductDTO;
 import com.cg.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,7 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Optional<Product> findById(Long id) {
-        return Optional.empty();
+        return productRepository.findById(id);
     }
 
     @Override
@@ -32,11 +34,26 @@ public class ProductServiceImpl implements ProductService{
 
     @Override
     public Product save(Product product) {
-        return null;
+        return productRepository.save(product);
     }
 
     @Override
     public void remove(Long id) {
+    }
 
+
+    @Override
+    public List<ProductDTO> findAllProductDTO() {
+        return productRepository.findAllProductDTO();
+    }
+
+    @Override
+    public Optional<Product> findProductById(Long id) {
+        return productRepository.findProductById(id);
+    }
+
+    @Override
+    public Boolean exitsById(Long id) {
+        return productRepository.existsById(id);
     }
 }
