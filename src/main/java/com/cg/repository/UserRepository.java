@@ -25,6 +25,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
 //            "u.locationRegion" +
 //            "FROM User AS u"
 //    )
+    Optional<User> findByEmail(String email);
 
     Optional<User> findUserById (Long id);
 

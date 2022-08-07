@@ -59,7 +59,7 @@ public class UserDTO {
                 .setUrlImage(urlImage)
                 .setFullName(fullName)
                 .setEmail(email)
-                .setPassword("123")
+                .setPassword(password)
                 .setPhone(phone)
                 .setRole(role.toRoleDTO())
                 .setLocationRegion(locationRegion.toLocationRegion());

@@ -12,6 +12,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -44,7 +45,7 @@ public class ProductRestController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<?> doCreate(@RequestBody ProductDTO productDTO, BindingResult bindingResult){
+    public ResponseEntity<?> doCreate(@Validated @RequestBody ProductDTO productDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return appUtil.mapErrorToResponse(bindingResult);
         }
@@ -57,15 +58,19 @@ public class ProductRestController {
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> doUpdate(@RequestBody ProductDTO productDTO, BindingResult bindingResult){
+    public ResponseEntity<?> doUpdate(@Validated @RequestBody ProductDTO productDTO, BindingResult bindingResult){
+
+        new ProductDTO().validate(productDTO, bindingResult);
 
         if (bindingResult.hasErrors()){
             return appUtil.mapErrorToResponse(bindingResult);
         }
 
+
+
         Boolean existId =productService.exitsById(productDTO.getId());
 
-        if (existId){
+        if (!existId){
             throw new ResourceNotFoundException("Product ID invalid");
         }
 

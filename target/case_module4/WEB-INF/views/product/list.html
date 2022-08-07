@@ -97,6 +97,10 @@
       $('#tbListProducts tbody').prepend($(tempRowProduct(product.id,product.id, product.title,product.urlImage, product.price, product.quantity,category.title)));
   }
 
+  function replaceRowCustomer() {
+      $('#tr_' + product.id).replaceWith($(tempRowProduct(product.id,product.id, product.title,product.urlImage, product.price, product.quantity,category.title)));
+  }
+
   function handleShowFooter() {
       $("#tbListProducts tbody tr").on('click', function () {
           productId = $(this).attr('id').replace('tr_', '');
@@ -148,6 +152,23 @@
           })
           .fail((jqXHR) => {
               console.log(jqXHR);
+              $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
+
+              if (jqXHR.responseJSON.message) {
+                  let msg = jqXHR.responseJSON.message;
+
+                  let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                  $('#modalCreateProduct .modal-alert-danger').append(str);
+              }
+              else if (jqXHR.responseJSON) {
+                  $.each(jqXHR.responseJSON, (key, item) => {
+                      let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
+                      $("#" + key).addClass("error");
+
+                      $('#modalCreateProduct .modal-alert-danger').append(str);
+                  })
+              }
           })
 
   })
@@ -157,7 +178,7 @@
           category.id = $('#categoryUp').val();
 
           product.title = $('#titleUp').val();
-          product.urlImage = $('#imageUp').val();
+          product.urlImage = $('#imageSa').val();
           product.price = $('#priceUp').val();
           product.quantity = $('#quantityUp').val();
           product.category = category;
@@ -172,21 +193,42 @@
           "data": JSON.stringify(product)
       })
           .done((data) => {
+              console.log(data)
               product = data;
 
               category = product.category;
 
-              addRowCustomer();
+              replaceRowCustomer();
 
               $('#modalUpdateProduct').modal('hide');
 
-              App.SweetAlert.showSuccessAlert("Create user success");
+              App.SweetAlert.showSuccessAlert("Create product success");
 
               unbindAll();
 
               handleShowFooter();
 
           })
+      .fail((jqXHR) =>{
+          $('#modalUpdateProduct .modal-alert-danger').html('').removeClass('hide').addClass('show');
+
+          if (jqXHR.responseJSON.message) {
+              let msg = jqXHR.responseJSON.message;
+
+              let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+              $('#modalUpdateProduct .modal-alert-danger').append(str);
+          }
+          else if (jqXHR.responseJSON) {
+              $.each(jqXHR.responseJSON, (key, item) => {
+                  let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
+                  $("#" + key).addClass("error");
+
+                  $('#modalUpdateProduct .modal-alert-danger').append(str);
+              })
+          }
+      })
+
 
   })
 
@@ -207,6 +249,7 @@
             url: "http://localhost:8080/api/products/" + productId
         })
         .done((data) => {
+            $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
             console.log(data)
             product = data;
 

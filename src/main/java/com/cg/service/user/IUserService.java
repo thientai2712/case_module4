@@ -15,6 +15,7 @@ public interface IUserService extends IGeneralService<User>, UserDetailsService 
 
     List<UserDTO> findAllUserDTO();
 
+
     Boolean existsById(Long id);
 
     Boolean existsByEmail(String email);

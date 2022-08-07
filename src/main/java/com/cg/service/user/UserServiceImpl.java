@@ -3,6 +3,7 @@ package com.cg.service.user;
 import com.cg.exception.EmailExistsException;
 import com.cg.model.LocationRegion;
 import com.cg.model.User;
+import com.cg.model.UserPrinciple;
 import com.cg.model.dto.UserDTO;
 import com.cg.repository.LocationRegionRepository;
 import com.cg.repository.UserRepository;
@@ -24,8 +25,8 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private LocationRegionRepository locationRegionRepository;
 
-//    @Autowired
-//    private PasswordEncoder passwordEncoder;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public List<User> findAll() {
@@ -42,12 +43,12 @@ public class UserServiceImpl implements IUserService {
         return userRepository.getById(id);
     }
 
-    @Override
-    public User save(User user) {
-        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());
-        user.setLocationRegion(locationRegion);
-        return userRepository.save(user);
-    }
+//    @Override
+//    public User save(User user) {
+//        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());
+//        user.setLocationRegion(locationRegion);
+//        return userRepository.save(user);
+//    }
 
     @Override
     public List<UserDTO> findAllUserDTO() {
@@ -82,7 +83,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public User getByEmail(String email) {
-        return null;
+        return userRepository.getByEmail(email);
     }
 
     @Override
@@ -92,7 +93,7 @@ public class UserServiceImpl implements IUserService {
 
     @Override
     public Optional<UserDTO> findUserDTOByEmail(String email) {
-        return Optional.empty();
+        return userRepository.findUserDTOByEmail(email);
     }
 
 
@@ -101,30 +102,28 @@ public class UserServiceImpl implements IUserService {
         return null;
     }
 
-//    @Override
-//    public User save(User user) {
-//        user.setPassword(passwordEncoder.encode(user.getPassword()));
-//        return userRepository.save(user);
-//    }
+    @Override
+    public User save(User user) {
+        LocationRegion locationRegion = locationRegionRepository.save(user.getLocationRegion());
+        user.setLocationRegion(locationRegion);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        return userRepository.save(user);
+    }
 
     @Override
     public void remove(Long id) {
         userRepository.deleteById(id);
     }
 
-    @Override
-    public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
-    }
 
-//    @Override
-//    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-//        Optional<User> userOptional = userRepository.findByUsername(username);
-//        if (!userOptional.isPresent()) {
-//            throw new UsernameNotFoundException(username);
-//        }
-//        return UserPrinciple.build(userOptional.get());
-////        return (UserDetails) userOptional.get();
-//    }
+    @Override
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<User> userOptional = userRepository.findByEmail(email);
+        if (!userOptional.isPresent()) {
+            throw new UsernameNotFoundException(email);
+        }
+        return UserPrinciple.build(userOptional.get());
+//        return (UserDetails) userOptional.get();
+    }
 
 }
