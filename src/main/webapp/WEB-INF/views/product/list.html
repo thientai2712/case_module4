@@ -77,6 +77,8 @@
 
         <th:block th:replace="/product/temp_row_product :: temp_row_product" />
 
+        <th:block th:replace="/product/temp_row_search :: temp_row_search" />
+
         <th:block th:replace="/layout/script/script :: script" />
 
   <script>
@@ -93,12 +95,18 @@
 
   let tempRowProduct = $.validator.format($.trim($('#tempRowProduct').val().toString()));
 
+  // let tempBlockProductSearch = $.validator.format($.trim($('#tempRowSearch').val().toString()));
+
   function addRowCustomer() {
       $('#tbListProducts tbody').prepend($(tempRowProduct(product.id,product.id, product.title,product.urlImage, product.price, product.quantity,category.title)));
   }
 
   function replaceRowCustomer() {
       $('#tr_' + product.id).replaceWith($(tempRowProduct(product.id,product.id, product.title,product.urlImage, product.price, product.quantity,category.title)));
+  }
+
+  function addBlockProductSearch() {
+      $('#product_search').prepend($(tempBlockProductSearch(product.id,product.urlImage,product.title)));
   }
 
   function handleShowFooter() {
@@ -108,7 +116,7 @@
           let tempFooter = $.validator.format($.trim($('#tempFooter').val().toString()));
 
           $('.footer').html(tempFooter);
-
+            handleshowConfirmDelete();
           handleShowUpdate();
       });
   }
@@ -202,7 +210,7 @@
 
               $('#modalUpdateProduct').modal('hide');
 
-              App.SweetAlert.showSuccessAlert("Create product success");
+              App.SweetAlert.showSuccessAlert("Update product success");
 
               unbindAll();
 
@@ -237,6 +245,34 @@
       $('#modalCreateProduct').modal('show')
   })
 
+  function handleshowConfirmDelete(){
+      $('button.deleted').on('click', function () {
+          App.SweetAlert.showConfirmDeleteProduct()
+              .then((result) => {
+                  if (result.isConfirmed) {
+                      $.ajax({
+                          "headers": {
+                              "accept": "application/json",
+                              "content-type": "application/json"
+                          },
+                          "type": "POST",
+                          "url": "http://localhost:8080/api/products/delete/" + productId,
+                          "data": JSON.stringify(product)
+                      })
+                          .done((data) => {
+                              $('#tr_' + productId).remove();
+                              console.log(data)
+                              App.SweetAlert.showSuccessAlert("Xóa Thành Công")
+
+                          })
+                          .fail((error) => {
+                              console.log(error)
+                              App.SweetAlert.showErrorAlert('Xóa thất bại');
+                          });
+                  }
+              })
+      })
+  }
 
   function handleShowUpdate(){
     $('#btnupdate_modal').on('click', () => {
@@ -249,7 +285,7 @@
             url: "http://localhost:8080/api/products/" + productId
         })
         .done((data) => {
-            $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
+            // $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
             console.log(data)
             product = data;
 
@@ -280,6 +316,36 @@
     })
   }
 
+  function searchByName(param){
+    var txtSearch = param.val();
+      return $.ajax({
+          "headers": {
+              "accept": "application/json",
+              "content-type": "application/json"
+          },
+          "type": "POST",
+          "url": "http://localhost:8080/api/search",
+          "data": JSON.stringify(txtSearch)
+
+      })
+          .done((data) =>{
+              $("#tbListProducts tbody").html("");
+                  console.log(data);
+              $.each(data, (i,item)=>{
+                  product = item;
+                  addBlockProductSearch();
+                  if (i > 2){
+                      return false;
+                  }
+              })
+              handleShowFooter();
+
+          })
+          .fail((jqXHR) => {
+              console.log(jqXHR);
+          })
+  }
+
   function loadAllProduct(){
       return $.ajax({
           "headers": {
@@ -298,6 +364,7 @@
                   addRowCustomer();
               })
               handleShowFooter();
+              handleshowConfirmDelete();
 
           })
           .fail((jqXHR) => {

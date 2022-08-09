@@ -33,7 +33,7 @@ public class UserDTO {
     @Column(nullable = false, unique = true)
     private String email;
 
-    @Size(max = 30, message = "Maximum password length 30 characters")
+//    @Size(max = 30, message = "Maximum password length 30 characters")
 //    @Size(min = 6, message = "Minimum password length 30 characters")
     private String password;
 
@@ -59,7 +59,7 @@ public class UserDTO {
                 .setUrlImage(urlImage)
                 .setFullName(fullName)
                 .setEmail(email)
-                .setPassword(password)
+                .setPassword("123")
                 .setPhone(phone)
                 .setRole(role.toRoleDTO())
                 .setLocationRegion(locationRegion.toLocationRegion());

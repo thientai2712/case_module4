@@ -34,6 +34,11 @@ public class RoleServiceImpl implements IRoleService{
     }
 
     @Override
+    public void softDelete(Role role) {
+
+    }
+
+    @Override
     public Role findByName(String name) {
         return null;
     }

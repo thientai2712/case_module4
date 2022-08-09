@@ -13,9 +13,7 @@ import org.springframework.validation.annotation.Validated;
 
 import javax.persistence.*;
 import javax.validation.Valid;
-import javax.validation.constraints.Digits;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 import java.math.BigDecimal;
 
 @Getter
@@ -30,14 +28,14 @@ public class ProductDTO implements Validator {
     @NotBlank(message = "Product Name is not required")
     private String title;
 
-//    @Size(max = 7, message = "Maximum price is 1000000")
-//    @Size(min = 2, message = "Maximum price is 100")
+    @Max(value = 1000000, message = "Maximum price is 1000000")
+    @Min(value = 50, message = "Minimum price is 50")
     @NotBlank(message = "Price is not null")
     private String price;
 
 
-    @Size(max = 4, message = "Maximum price is 10000")
-    @Size(min = 1, message = "Maximum quantity is 10")
+    @Max(value = 10000, message = "Maximum quantity is 10000")
+    @Min(value = 10, message = "Minimum quantity is 10")
     private String quantity;
 
 
@@ -54,6 +52,7 @@ public class ProductDTO implements Validator {
         this.urlImage = urlImage;
         this.category = category.toCategoryDTO();
     }
+
 
     public Product toProduct(){
         return new Product()

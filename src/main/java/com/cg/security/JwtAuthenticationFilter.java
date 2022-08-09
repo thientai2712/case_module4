@@ -60,7 +60,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             String authorizationCookie = getCookieValue(request);
 
-            setAuthentication(request, bearerToken);
+            //setAuthentication(request, bearerToken);
             setAuthentication(request, authorizationCookie);
 
         } catch (Exception e) {

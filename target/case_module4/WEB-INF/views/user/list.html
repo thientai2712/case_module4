@@ -117,6 +117,7 @@
 
             $('.footer').html(tempFooter);
 
+            handleshowConfirmDelete();
             handleShowUpdate();
         });
     }
@@ -369,8 +370,40 @@
     $('#btnShowCreate').on('click', function (){
         $('#modalCreateUser').modal('show')
     })
+
+
+    function handleshowConfirmDelete(){
+        $('button.deleted').on('click', function () {
+            App.SweetAlert.showConfirmDeleteUser()
+                .then((result) => {
+                    if (result.isConfirmed) {
+                        $.ajax({
+                            "headers": {
+                                "accept": "application/json",
+                                "content-type": "application/json"
+                            },
+                            "type": "POST",
+                            "url": "http://localhost:8080/api/users/delete/" + userId,
+                            "data": JSON.stringify(user)
+                        })
+                            .done(() => {
+                                $('#tr_' + userId).remove();
+                                App.SweetAlert.showSuccessAlert("Xóa Thành Công")
+
+                            })
+                            .fail((error) => {
+                                console.log(error)
+                                App.SweetAlert.showErrorAlert('Xóa thất bại');
+                            });
+                    }
+                })
+        })
+    }
+
     function handleShowUpdate() {
         $('#btnupdate_modal').on('click', () => {
+
+            // $('.modal-alert-danger ').html('');
 
             $.ajax({
                 headers: {
@@ -415,7 +448,7 @@
                 "content-type": "application/json"
             },
             "type": "GET",
-            "url": "http://localhost:8080/api/users"
+            "url": "http://localhost:8080/api/users/"
         })
             .done((data) =>{
                 $("#tbListUsers tbody").html("");
@@ -427,6 +460,7 @@
 
                     addRowCustomer();
                 })
+                handleshowConfirmDelete();
                 handleShowFooter();
 
             })

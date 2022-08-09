@@ -41,10 +41,21 @@ public class ProductServiceImpl implements ProductService{
     public void remove(Long id) {
     }
 
+    @Override
+    public void softDelete(Product product) {
+        product.setDeleted(true);
+        productRepository.save(product);
+    }
+
 
     @Override
     public List<ProductDTO> findAllProductDTO() {
         return productRepository.findAllProductDTO();
+    }
+
+    @Override
+    public List<ProductDTO> findAllProductDTOdeleteFalse() {
+        return productRepository.findAllProductDTOdeleteFalse();
     }
 
     @Override
@@ -55,5 +66,10 @@ public class ProductServiceImpl implements ProductService{
     @Override
     public Boolean exitsById(Long id) {
         return productRepository.existsById(id);
+    }
+
+    @Override
+    public List<ProductDTO> findProductDTOByTitle(String keySearch) {
+        return productRepository.findProductDTOByTitle(keySearch);
     }
 }

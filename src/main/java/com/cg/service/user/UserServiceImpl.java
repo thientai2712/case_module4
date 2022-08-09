@@ -56,6 +56,11 @@ public class UserServiceImpl implements IUserService {
     }
 
     @Override
+    public List<UserDTO> findAllUserDTOdeleteFalse() {
+        return userRepository.findAllUserDTOdeleteFalse();
+    }
+
+    @Override
     public Boolean existsById(Long id) {
         return userRepository.existsById(id);
     }
@@ -110,9 +115,17 @@ public class UserServiceImpl implements IUserService {
         return userRepository.save(user);
     }
 
+
+
     @Override
     public void remove(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public void softDelete(User user) {
+        user.setDeleted(true);
+        userRepository.save(user);
     }
 
 

@@ -15,6 +15,8 @@ public interface IUserService extends IGeneralService<User>, UserDetailsService 
 
     List<UserDTO> findAllUserDTO();
 
+    List<UserDTO> findAllUserDTOdeleteFalse();
+
 
     Boolean existsById(Long id);
 

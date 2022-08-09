@@ -15,7 +15,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -30,7 +32,7 @@ public class ProductRestController {
 
     @GetMapping
     public ResponseEntity<?> getAllProducts(){
-        List<ProductDTO> productDTOS = productService.findAllProductDTO();
+        List<ProductDTO> productDTOS = productService.findAllProductDTOdeleteFalse();
 
         return new ResponseEntity<>(productDTOS, HttpStatus.CREATED);
 
@@ -55,6 +57,39 @@ public class ProductRestController {
 
 
         return new ResponseEntity<>(newProduct.toProductDTO(), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/search")
+    public ResponseEntity<?> searchProduct(@RequestBody String keySearch){
+        String key = keySearch.substring(1,keySearch.length()-1);
+
+        if (key.trim().equals("")) {
+            throw new DataInputException("Vui Lòng Nhập Tên Sản Phẩm Cần Tìm");
+        }
+
+        List<ProductDTO> productDTOList = productService.findProductDTOByTitle(key);
+
+        if (productDTOList.isEmpty()) {
+            throw new DataInputException("Không Tìm Thấy Từ Khóa");
+        }
+
+        return new ResponseEntity<>(productDTOList,HttpStatus.OK);
+    }
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> doDelete(@PathVariable Long id){
+
+        Optional<Product> optionalProduct = productService.findById(id);
+        Map<String,String> result = new HashMap<>();
+        String success;
+        if (optionalProduct.isPresent()) {
+            productService.softDelete(optionalProduct.get());
+            success = "Delete product success";
+            result.put("success",success);
+        } else {
+            throw new DataInputException("Delete is failed");
+        }
+
+        return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
     @PutMapping("/update")

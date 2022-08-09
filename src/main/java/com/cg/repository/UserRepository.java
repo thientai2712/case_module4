@@ -53,6 +53,21 @@ public interface UserRepository extends JpaRepository<User,Long> {
 
     @Query("SELECT new com.cg.model.dto.UserDTO (" +
             "u.id, " +
+            "u.urlImage, " +
+            "u.fullName, " +
+            "u.email, " +
+            "u.password, " +
+            "u.phone, " +
+            "u.role, " +
+            "u.locationRegion" +
+            ") " +
+            "FROM User AS u " +
+            "WHERE u.deleted = false"
+    )
+    List<UserDTO> findAllUserDTOdeleteFalse();
+
+    @Query("SELECT new com.cg.model.dto.UserDTO (" +
+            "u.id, " +
             "u.fullName, " +
             "u.email, " +
             "u.password, " +

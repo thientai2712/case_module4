@@ -18,6 +18,28 @@ class App {
                 text: t,
             })
         }
+        static showConfirmDeleteUser() {
+            return Swal.fire({
+                title: 'Bạn có muốn xoá tạm thời user này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Có, Xoá ngay!',
+                cancelButtonText: 'Huỷ'
+            });
+        }
+        static showConfirmDeleteProduct() {
+            return Swal.fire({
+                title: 'Bạn có muốn xoá sản phẩm này?',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Có, Xoá ngay!',
+                cancelButtonText: 'Huỷ'
+            });
+        }
     }
 
     static IziToast = class  {

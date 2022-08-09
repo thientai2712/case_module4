@@ -33,7 +33,7 @@ public class UserRestController {
 
     @GetMapping()
     public ResponseEntity<?> findAllUser(){
-        List<UserDTO> userDTOS = userService.findAllUserDTO();
+        List<UserDTO> userDTOS = userService.findAllUserDTOdeleteFalse();
 
         return new ResponseEntity<>(userDTOS, HttpStatus.OK);
     }
@@ -70,6 +70,19 @@ public class UserRestController {
         User newUser = userService.save(userDTO.toUser());
 
         return  new ResponseEntity<>(newUser.toUserDTO(), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/delete/{id}")
+    public ResponseEntity<?> doDelete(@PathVariable Long id){
+
+        Optional<User> userOptional = userService.findById(id);
+
+        if (userOptional.isPresent()) {
+            userService.softDelete(userOptional.get());
+        } else {
+            throw new DataInputException("Delete is failed");
+        }
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 
 
