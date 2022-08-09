@@ -13,6 +13,7 @@ import jdk.jfr.internal.Repository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -47,6 +48,7 @@ public class UserRestController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> doCreate(@Validated @RequestBody UserDTO userDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()) {
             return appUtil.mapErrorToResponse(bindingResult);
@@ -87,6 +89,7 @@ public class UserRestController {
 
 
     @PutMapping("/update")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> doUpdate(@Validated @RequestBody UserDTOS userDTOS, BindingResult bindingResult) {
 
         if (bindingResult.hasErrors()) {

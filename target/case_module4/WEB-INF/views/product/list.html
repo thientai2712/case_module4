@@ -220,24 +220,42 @@
       .fail((jqXHR) =>{
           $('#modalUpdateProduct .modal-alert-danger').html('').removeClass('hide').addClass('show');
 
-          if (jqXHR.responseJSON.message) {
-              let msg = jqXHR.responseJSON.message;
+          if (jqXHR.status === 401) {
+              let msg = "Vui lòng đăng nhập !!";dv
 
               let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
               $('#modalUpdateProduct .modal-alert-danger').append(str);
           }
-          else if (jqXHR.responseJSON) {
-              $.each(jqXHR.responseJSON, (key, item) => {
-                  let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
-                  $("#" + key).addClass("error");
+          else {
+              if (jqXHR.status === 403) {
+                  let msg = "Bạn không đủ quyền để thực hiện chức năng này !!";
+
+                  let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
                   $('#modalUpdateProduct .modal-alert-danger').append(str);
-              })
+              }
+              else {
+                  if (jqXHR.responseJSON.message) {
+                      let msg = jqXHR.responseJSON.message;
+
+                      let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                      $('#modalUpdateProduct .modal-alert-danger').append(str);
+                  }
+                  else if (jqXHR.responseJSON) {
+                      $.each(jqXHR.responseJSON, (key, item) => {
+                          let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
+                          $("#" + key).addClass("error");
+
+                          $('#modalUpdateProduct .modal-alert-danger').append(str);
+                      })
+                  }
+              }
           }
+
+
       })
-
-
   })
 
 
@@ -378,6 +396,7 @@
           $(".modal").modal("hide");
       });
   });
+
 
   </script>
 
