@@ -75,6 +75,7 @@ public class UserRestController {
     }
 
     @PostMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> doDelete(@PathVariable Long id){
 
         Optional<User> userOptional = userService.findById(id);

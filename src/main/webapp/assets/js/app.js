@@ -20,24 +20,24 @@ class App {
         }
         static showConfirmDeleteUser() {
             return Swal.fire({
-                title: 'Bạn có muốn xoá tạm thời user này?',
+                title: 'Do you want to remove this User?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Có, Xoá ngay!',
-                cancelButtonText: 'Huỷ'
+                confirmButtonText: 'Yes, Please!',
+                cancelButtonText: 'Cancel'
             });
         }
         static showConfirmDeleteProduct() {
             return Swal.fire({
-                title: 'Bạn có muốn xoá sản phẩm này?',
+                title: 'Do you want to remove this Product?',
                 icon: 'warning',
                 showCancelButton: true,
                 confirmButtonColor: '#3085d6',
                 cancelButtonColor: '#d33',
-                confirmButtonText: 'Có, Xoá ngay!',
-                cancelButtonText: 'Huỷ'
+                confirmButtonText: 'Yes, Please!',
+                cancelButtonText: 'Cancel'
             });
         }
     }

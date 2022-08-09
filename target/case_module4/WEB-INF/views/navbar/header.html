@@ -31,11 +31,12 @@
                 </button>
 
                 <!-- App Search-->
-                <form class="app-search d-none d-lg-block">
+                <form class="app-search d-none d-lg-block" id="modal_search">
                     <div class="position-relative">
-                        <input oninput="searchByName(this)" id="product_search" type="text" class="form-control" placeholder="Search...">
+                        <input name="product_search" id="product_search" type="text" class="form-control" placeholder="Search...">
                         <span class="bx bx-search-alt"></span>
                     </div>
+                    <div class="modal-alert-danger hide"></div>
                 </form>
 
 

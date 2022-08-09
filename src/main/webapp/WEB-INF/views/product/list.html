@@ -162,20 +162,38 @@
               console.log(jqXHR);
               $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
 
-              if (jqXHR.responseJSON.message) {
-                  let msg = jqXHR.responseJSON.message;
+              if (jqXHR.status === 401) {
+                  let msg = "Please Login !!";
 
                   let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
                   $('#modalCreateProduct .modal-alert-danger').append(str);
               }
-              else if (jqXHR.responseJSON) {
-                  $.each(jqXHR.responseJSON, (key, item) => {
-                      let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
-                      $("#" + key).addClass("error");
+              else {
+                  if (jqXHR.status === 403) {
+                      let msg = "You are not authorized to perform this function !!";
+
+                      let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
                       $('#modalCreateProduct .modal-alert-danger').append(str);
-                  })
+                  }
+                  else {
+                      if (jqXHR.responseJSON.message) {
+                          let msg = jqXHR.responseJSON.message;
+
+                          let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
+
+                          $('#modalCreateProduct .modal-alert-danger').append(str);
+                      }
+                      else if (jqXHR.responseJSON) {
+                          $.each(jqXHR.responseJSON, (key, item) => {
+                              let str = `<label id="${key}-error" class="error" for="${key}">${item}</label>`;
+                              $("#" + key).addClass("error");
+
+                              $('#modalCreateProduct .modal-alert-danger').append(str);
+                          })
+                      }
+                  }
               }
           })
 
@@ -221,7 +239,7 @@
           $('#modalUpdateProduct .modal-alert-danger').html('').removeClass('hide').addClass('show');
 
           if (jqXHR.status === 401) {
-              let msg = "Vui lòng đăng nhập !!";dv
+              let msg = "Please Login !!";
 
               let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
@@ -229,7 +247,7 @@
           }
           else {
               if (jqXHR.status === 403) {
-                  let msg = "Bạn không đủ quyền để thực hiện chức năng này !!";
+                  let msg = "You are not authorized to perform this function !!";
 
                   let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
@@ -280,12 +298,12 @@
                           .done((data) => {
                               $('#tr_' + productId).remove();
                               console.log(data)
-                              App.SweetAlert.showSuccessAlert("Xóa Thành Công")
+                              App.SweetAlert.showSuccessAlert("Delete success")
 
                           })
                           .fail((error) => {
                               console.log(error)
-                              App.SweetAlert.showErrorAlert('Xóa thất bại');
+                              App.SweetAlert.showErrorAlert('You are not authorized to perform this function !!');
                           });
                   }
               })
@@ -320,11 +338,11 @@
         })
         .fail((jqXHR) => {
             if (jqXHR.status === 401) {
-                App.SweetAlert.showErrorAlert("Vui lòng đăng nhập");
+                App.SweetAlert.showErrorAlert("Please login!!");
             }
             else {
                 if (jqXHR.status === 403) {
-                    App.SweetAlert.showErrorAlert("Bạn không đủ quyền để thực hiện chức năng này");
+                    App.SweetAlert.showErrorAlert("You are not authorized to perform this function!!");
                 }
                 else {
                     App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);
@@ -334,16 +352,18 @@
     })
   }
 
-  function searchByName(param){
-    var txtSearch = param.val();
+
+
+  $("#product_search").on('input', () => {
+    let searchKey = $("#product_search").val();
       return $.ajax({
           "headers": {
               "accept": "application/json",
               "content-type": "application/json"
           },
           "type": "POST",
-          "url": "http://localhost:8080/api/search",
-          "data": JSON.stringify(txtSearch)
+          "url": "http://localhost:8080/api/products/search",
+          "data": JSON.stringify(searchKey)
 
       })
           .done((data) =>{
@@ -351,18 +371,17 @@
                   console.log(data);
               $.each(data, (i,item)=>{
                   product = item;
-                  addBlockProductSearch();
-                  if (i > 2){
-                      return false;
-                  }
+                  category = product.category
+                  addRowCustomer();
               })
               handleShowFooter();
-
+              handleshowConfirmDelete();
           })
           .fail((jqXHR) => {
               console.log(jqXHR);
+              App.SweetAlert.showErrorAlert("Can't found Product")
           })
-  }
+  })
 
   function loadAllProduct(){
       return $.ajax({
@@ -389,7 +408,20 @@
               console.log(jqXHR);
           })
   }
+  function handleCloseModalCreate() {
+      $("#modalCreateProduct").on("hidden.bs.modal", () => {
+          $('#modalCreateProduct .modal-alert-danger').empty().removeClass('show').addClass('hide');
+      })
+  }
+
+  function handleCloseModalUpdate() {
+      $("#modalUpdateProduct").on("hidden.bs.modal", () => {
+          $('#modalUpdateProduct .modal-alert-danger').empty().removeClass('show').addClass('hide');
+      })
+  }
   loadAllProduct();
+  handleCloseModalUpdate();
+  handleCloseModalCreate();
 
   $(() => {
       $("button.btn-close").on("click", () => {

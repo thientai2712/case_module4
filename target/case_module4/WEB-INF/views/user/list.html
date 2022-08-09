@@ -219,6 +219,7 @@
         user.email = $('#email').val();
         user.phone = $('#phone').val();
         user.urlImage = 'user.png';
+        user.password = '123';
         user.role = role;
         user.locationRegion = locationRegion;
 
@@ -255,7 +256,7 @@
             $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
 
             if (jqXHR.status === 401) {
-                let msg = "Vui lòng đăng nhập !!";
+                let msg = "Please login !!";
 
                 let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
@@ -263,7 +264,7 @@
             }
             else {
                 if (jqXHR.status === 403) {
-                    let msg = "Bạn không đủ quyền để thực hiện chức năng này !!";
+                    let msg = "You are not authorized to perform this function !!";
 
                     let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
@@ -341,7 +342,7 @@
                 $(' .modal-alert-danger').html('').removeClass('hide').addClass('show');
 
                 if (jqXHR.status === 403) {
-                    let msg = "Bạn không đủ quyền để thực hiện chức năng này !!";
+                    let msg = "You are not authorized to perform this function !!";
 
                     let str = `<label id="message-error" class="error" for="message">${msg}</label>`;
 
@@ -414,12 +415,12 @@
                         })
                             .done(() => {
                                 $('#tr_' + userId).remove();
-                                App.SweetAlert.showSuccessAlert("Xóa Thành Công")
+                                App.SweetAlert.showSuccessAlert("Delete success")
 
                             })
                             .fail((error) => {
                                 console.log(error)
-                                App.SweetAlert.showErrorAlert('Xóa thất bại');
+                                App.SweetAlert.showErrorAlert('You are not authorized to perform this function !!');
                             });
                     }
                 })
@@ -464,11 +465,11 @@
                 })
                 .fail((jqXHR) => {
                     if (jqXHR.status === 401) {
-                        App.SweetAlert.showErrorAlert("Vui lòng đăng nhập");
+                        App.SweetAlert.showErrorAlert("Please login!!");
                     }
                     else {
                         if (jqXHR.status === 403) {
-                            App.SweetAlert.showErrorAlert("Bạn không đủ quyền để thực hiện chức năng này");
+                            App.SweetAlert.showErrorAlert("You are not authorized to perform this function!!");
                         }
                         else {
                             App.SweetAlert.showErrorAlert(jqXHR.responseJSON.message);
@@ -504,7 +505,26 @@
                 console.log(jqXHR);
             })
     }
+    function handleCloseModalCreate() {
+        $("#modalCreateUser").on("hidden.bs.modal", () => {
+            $('#modalCreateUser .modal-alert-danger').empty().removeClass('show').addClass('hide');
+        })
+    }
+
+    function handleCloseModalUpdate() {
+        $("#modalUpdateUser").on("hidden.bs.modal", () => {
+            $('#modalUpdateUser .modal-alert-danger').empty().removeClass('show').addClass('hide');
+        })
+    }
+    function handleCloseModalSearch() {
+        $("#modal_search").on("hidden.bs.modal", () => {
+            $('#modal_search .modal-alert-danger').empty().removeClass('show').addClass('hide');
+        })
+    }
     loadAllUser();
+    handleCloseModalUpdate();
+    handleCloseModalCreate();
+    handleCloseModalSearch();
 
 
     $(() => {

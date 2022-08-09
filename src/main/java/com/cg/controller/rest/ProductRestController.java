@@ -16,10 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/products")
@@ -48,10 +45,18 @@ public class ProductRestController {
     }
 
     @PostMapping("/create")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> doCreate(@Validated @RequestBody ProductDTO productDTO, BindingResult bindingResult){
         if (bindingResult.hasErrors()){
             return appUtil.mapErrorToResponse(bindingResult);
         }
+
+        Boolean existId =productService.exitsById(productDTO.getId());
+
+        if (!existId){
+            throw new ResourceNotFoundException("Product ID invalid");
+        }
+
         productDTO.setId(0L);
 
         Product newProduct = productService.save(productDTO.toProduct());
@@ -61,22 +66,23 @@ public class ProductRestController {
     }
 
     @PostMapping("/search")
-    public ResponseEntity<?> searchProduct(@RequestBody String keySearch){
-        String key = keySearch.substring(1,keySearch.length()-1);
-
-        if (key.trim().equals("")) {
-            throw new DataInputException("Vui Lòng Nhập Tên Sản Phẩm Cần Tìm");
-        }
+    public ResponseEntity<?> searchProduct(@RequestBody String searchKey){
+        String key = searchKey.toLowerCase();
+//
+//        if (key.trim().equals("")) {
+//            throw new DataInputException("Vui Lòng Nhập Tên Sản Phẩm Cần Tìm");
+//        }
 
         List<ProductDTO> productDTOList = productService.findProductDTOByTitle(key);
 
         if (productDTOList.isEmpty()) {
-            throw new DataInputException("Không Tìm Thấy Từ Khóa");
+            throw new DataInputException("Can't found Product");
         }
 
         return new ResponseEntity<>(productDTOList,HttpStatus.OK);
     }
     @PostMapping("/delete/{id}")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
     public ResponseEntity<?> doDelete(@PathVariable Long id){
 
         Optional<Product> optionalProduct = productService.findById(id);

@@ -48,7 +48,7 @@ public interface ProductRepository extends JpaRepository<Product,Long> {
             "p.category " +
             ") " +
             "FROM Product AS p " +
-            "WHERE p.title LIKE %?1% " +
+            "WHERE p.title LIKE %?2% " +
             "ORDER BY p.title DESC"
     )
     List<ProductDTO> findProductDTOByTitle(String keySearch);
